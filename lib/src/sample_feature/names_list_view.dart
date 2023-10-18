@@ -7,6 +7,7 @@ import 'sample_item.dart';
 import 'sample_item_details_view.dart';
 import 'dart:developer' as developer;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/services.dart';
 
@@ -61,14 +62,6 @@ class NameListItem extends StatelessWidget {
         : Colors.pink;
   }
 
-  TextStyle? _getTextStyle(BuildContext context) {
-    if (!inFav) return null;
-
-    return const TextStyle(
-      color: Colors.black54,
-      decoration: TextDecoration.lineThrough,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +92,11 @@ class NamesListView extends StatefulWidget {
 
 class _NamesListViewState extends State<NamesListView> {
   late Future<List<Name>> futureNames;
+  
+  
+
+
+
 
   // Fetch content from the json file
   Future<List<Name>> readJson() async {
@@ -110,7 +108,9 @@ class _NamesListViewState extends State<NamesListView> {
     return data.map((nameJson) => Name.fromJson(nameJson)).toList();
   }
 
-  final _favList = <Name>{};
+  //Set<Name>  _favList = {};
+  List<String> _favList = <String>[];
+
   void _handleFavsChange(Name name, bool inFav) {
     setState(() {
       // When a user changes what's in the cart, you need
@@ -120,11 +120,30 @@ class _NamesListViewState extends State<NamesListView> {
       // which updates the visual appearance of the app.
 
       if (!inFav) {
-        _favList.add(name);
+        _favList.add(name.id.toString());
       } else {
-        _favList.remove(name);
+        _favList.remove(name.id.toString());
       }
     });
+
+    _saveFavs();
+  }
+
+    Future<void> _loadFavs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+
+    //var lstFavs = prefs.getStringList('favList');
+
+    setState(() {
+      _favList = prefs.getStringList('favList') ?? [];
+    });
+  }
+
+  Future<void> _saveFavs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setStringList('favList', _favList);
   }
 
   @override
@@ -132,6 +151,7 @@ class _NamesListViewState extends State<NamesListView> {
   initState() {
     // ignore: avoid_print
     futureNames = readJson();
+    _loadFavs();
   }
 
   @override
@@ -164,7 +184,7 @@ class _NamesListViewState extends State<NamesListView> {
                     children: snapshot.data!.map((name) {
                       return NameListItem(
                         name: name,
-                        inFav: _favList.contains(name),
+                        inFav: _favList.contains(name.id.toString()),
                         onFavChange: _handleFavsChange,
                       );
                     }).toList());
