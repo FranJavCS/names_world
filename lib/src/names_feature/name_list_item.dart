@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'name.dart';
 
-
 typedef FavoriteChangedCallback = Function(Name name, bool inFav);
 
 class NameListItem extends StatelessWidget {
@@ -26,28 +25,43 @@ class NameListItem extends StatelessWidget {
   }
 
   Color _getGenderColor(BuildContext context, String gender) {
-
     return gender == 'M' //
         ? Colors.lightBlue
         : Colors.pink;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return ListTile(
         onTap: () {
-          onFavChange(name, inFav);
+          showModalBottomSheet<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return SizedBox(
+                height: 200,
+                child: Center(
+                    child: Padding(
+                  padding: EdgeInsets.all(50.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[Text(name.meaning)],
+                  ),
+                )),
+              );
+            },
+          );
         },
         leading: CircleAvatar(
           backgroundColor: _getGenderColor(context, name.gender),
           child: Text(name.gender),
         ),
-        title: Text(
-          name.name
-        ),
-        trailing: Icon(Icons.favorite,
+        title: Text(name.name),
+        trailing: IconButton(
+            icon: const Icon(Icons.favorite, size: 24.0),
             color: _getColor(context),
-            size: 24.0));
+            onPressed: () {
+              onFavChange(name, inFav);
+            }));
   }
 }

@@ -24,17 +24,22 @@ class MainSection extends StatefulWidget {
 class _MainSectionState extends State<MainSection> {
   late Future<List<Name>> futureNames;
 
+  List<Name> listNames=[];
 
- List<Name> favoriteNames = [];
+
+  List<Name> favoriteNames = [];
 
   // Fetch content from the json file
-  Future<List<Name>> readJson() async {
+  Future<void> readJson() async {
     final String response =
         await rootBundle.loadString('assets/json/data.json');
     final data = await json.decode(response)['items'] as List;
     developer.log('Consultando data', name: 'my.app.category');
     developer.log(jsonEncode(data), name: 'my.app.category');
-    return data.map((nameJson) => Name.fromJson(nameJson)).toList();
+    setState(() {
+      listNames = data.map((nameJson) => Name.fromJson(nameJson)).toList();
+    });
+    
   }
 
   //Set<Name>  _favList = {};
@@ -42,17 +47,20 @@ class _MainSectionState extends State<MainSection> {
 
   void _handleFavsChange(Name name, bool inFav) {
     setState(() {
-      // When a user changes what's in the cart, you need
-      // to change _shoppingCart inside a setState call to
-      // trigger a rebuild.
-      // The framework then calls build, below,
-      // which updates the visual appearance of the app.
+        if (!inFav) {
+          _favList.add(name.id.toString());
+        } else {
+          _favList.remove(name.id.toString());
+        }
+      
+    });
 
-      if (!inFav) {
-        _favList.add(name.id.toString());
-      } else {
-        _favList.remove(name.id.toString());
-      }
+    _saveFavs();
+  }
+
+  void _clearFavs() {
+    setState(() {
+      _favList.clear();
     });
 
     _saveFavs();
@@ -60,12 +68,8 @@ class _MainSectionState extends State<MainSection> {
 
   Future<void> _loadFavs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    //var lstFavs = prefs.getStringList('favList');
-
     setState(() {
       _favList = prefs.getStringList('favList') ?? [];
-     
     });
   }
 
@@ -79,7 +83,7 @@ class _MainSectionState extends State<MainSection> {
   // ignore: must_call_super
   initState() {
     // ignore: avoid_print
-    futureNames = readJson();
+    readJson();
     _loadFavs();
   }
 
@@ -87,18 +91,15 @@ class _MainSectionState extends State<MainSection> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Name>>(
-      future: futureNames,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Scaffold(
+    return Center(
+      child: listNames.isNotEmpty ? Scaffold(
             bottomNavigationBar: NavigationBar(
               onDestinationSelected: (int index) {
                 setState(() {
                   currentPageIndex = index;
                 });
               },
-              indicatorColor: Colors.amber[800],
+              indicatorColor: Theme.of(context).primaryColor,
               selectedIndex: currentPageIndex,
               destinations: const <Widget>[
                 NavigationDestination(
@@ -107,29 +108,33 @@ class _MainSectionState extends State<MainSection> {
                   label: 'Home',
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.star),
+                  selectedIcon: Icon(Icons.star),
+                  icon: Icon(Icons.star_outline),
                   label: 'Favoritos',
                 ),
                 NavigationDestination(
-                  selectedIcon: Icon(Icons.school),
-                  icon: Icon(Icons.settings),
+                  selectedIcon: Icon(Icons.settings),
+                  icon: Icon(Icons.settings_outlined),
                   label: 'Configuraciones',
                 ),
               ],
             ),
             body: <Widget>[
-              NamesListView(futureNames: snapshot.data, favList: _favList, handleFavsChange: _handleFavsChange),
-               NamesFavsView(futureNames: snapshot.data, favList: _favList, handleFavsChange: _handleFavsChange),
+              NamesListView(
+                  futureNames: listNames,
+                  favList: _favList,
+                  handleFavsChange: _handleFavsChange),
+              NamesFavsView(
+                  futureNames: listNames,
+                  favList: _favList,
+                  handleFavsChange: _handleFavsChange,
+                  handleClearFavs: _clearFavs),
               SettingsView(controller: widget.settingsController),
             ][currentPageIndex],
-          );
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        }
-
-        // By default, show a loading spinner.
-        return const CircularProgressIndicator();
-      },
+          ) : const CircularProgressIndicator()
     );
+  
+      }
+
   }
-}
+
