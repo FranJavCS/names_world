@@ -5,11 +5,13 @@ import '../settings/settings_view.dart';
 import 'name.dart';
 
 class NamesListView extends StatefulWidget {
-  const NamesListView({Key? key, required this.futureNames, required this.handleFavsChange, required this.favList}) : super(key: key);
+  const NamesListView({Key? key, required this.futureNames, required this.handleFavsChange, required this.favList, this.onFilterGender}) : super(key: key);
 
   final List<Name>? futureNames;
   final List<String> favList;
   final handleFavsChange;
+
+  final onFilterGender;
 
   static const routeName = '/';
 
@@ -31,14 +33,18 @@ class _NamesListViewState extends State<NamesListView> {
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.settings),
+              icon: const Icon(Icons.male, color: Colors.blue),
               onPressed: () {
-                // Navigate to the settings page. If the user leaves and returns
-                // to the app after it has been killed while running in the
-                // background, the navigation stack is restored.
-                Navigator.restorablePushNamed(context, SettingsView.routeName);
+                widget.onFilterGender('M');
               },
             ),
+            IconButton(
+              icon: const Icon(Icons.female,color: Colors.pink),
+              onPressed: () {
+                widget.onFilterGender('F');
+              },
+            ),
+            TextButton(onPressed: () {widget.onFilterGender(''); }, child: const Text('All', style: TextStyle(color: Colors.white)))
           ],
         ),
         body: Center(

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:names_world/src/names_feature/names_list.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../settings/settings_view.dart';
 
 import 'name.dart';
 

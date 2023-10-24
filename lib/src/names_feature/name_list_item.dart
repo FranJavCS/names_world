@@ -41,7 +41,7 @@ class NameListItem extends StatelessWidget {
                 height: 200,
                 child: Center(
                     child: Padding(
-                  padding: EdgeInsets.all(50.0),
+                  padding: const EdgeInsets.all(50.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:names_world/src/names_feature/names_favs_view.dart';
 import 'dart:convert';
@@ -24,8 +26,9 @@ class MainSection extends StatefulWidget {
 class _MainSectionState extends State<MainSection> {
   late Future<List<Name>> futureNames;
 
-  List<Name> listNames=[];
+  List<Name> listNames = [];
 
+  List<Name> allListNames = [];
 
   List<Name> favoriteNames = [];
 
@@ -37,9 +40,9 @@ class _MainSectionState extends State<MainSection> {
     developer.log('Consultando data', name: 'my.app.category');
     developer.log(jsonEncode(data), name: 'my.app.category');
     setState(() {
-      listNames = data.map((nameJson) => Name.fromJson(nameJson)).toList();
+      allListNames = data.map((nameJson) => Name.fromJson(nameJson)).toList();
+      listNames = allListNames;
     });
-    
   }
 
   //Set<Name>  _favList = {};
@@ -47,12 +50,11 @@ class _MainSectionState extends State<MainSection> {
 
   void _handleFavsChange(Name name, bool inFav) {
     setState(() {
-        if (!inFav) {
-          _favList.add(name.id.toString());
-        } else {
-          _favList.remove(name.id.toString());
-        }
-      
+      if (!inFav) {
+        _favList.add(name.id.toString());
+      } else {
+        _favList.remove(name.id.toString());
+      }
     });
 
     _saveFavs();
@@ -79,6 +81,20 @@ class _MainSectionState extends State<MainSection> {
     await prefs.setStringList('favList', _favList);
   }
 
+  void _handleGenderFilter(gender) {
+ developer.log(gender);
+    if (gender != '') {
+      setState(() {
+        listNames= allListNames.where((name) => name.gender == gender).toList();
+      });
+    } else {
+      setState(() {
+        listNames = allListNames;
+      });
+    }
+    
+  }
+
   @override
   // ignore: must_call_super
   initState() {
@@ -92,49 +108,48 @@ class _MainSectionState extends State<MainSection> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: listNames.isNotEmpty ? Scaffold(
-            bottomNavigationBar: NavigationBar(
-              onDestinationSelected: (int index) {
-                setState(() {
-                  currentPageIndex = index;
-                });
-              },
-              indicatorColor: Theme.of(context).primaryColor,
-              selectedIndex: currentPageIndex,
-              destinations: const <Widget>[
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.home),
-                  icon: Icon(Icons.home_outlined),
-                  label: 'Home',
+        child: listNames.isNotEmpty
+            ? Scaffold(
+                bottomNavigationBar: NavigationBar(
+                  onDestinationSelected: (int index) {
+                    setState(() {
+                      currentPageIndex = index;
+                    });
+                  },
+                  indicatorColor: Theme.of(context).primaryColor,
+                  selectedIndex: currentPageIndex,
+                  destinations: const <Widget>[
+                    NavigationDestination(
+                      selectedIcon: Icon(Icons.home),
+                      icon: Icon(Icons.home_outlined),
+                      label: 'Home',
+                    ),
+                    NavigationDestination(
+                      selectedIcon: Icon(Icons.star),
+                      icon: Icon(Icons.star_outline),
+                      label: 'Favoritos',
+                    ),
+                    NavigationDestination(
+                      selectedIcon: Icon(Icons.settings),
+                      icon: Icon(Icons.settings_outlined),
+                      label: 'Configuraciones',
+                    ),
+                  ],
                 ),
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.star),
-                  icon: Icon(Icons.star_outline),
-                  label: 'Favoritos',
-                ),
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.settings),
-                  icon: Icon(Icons.settings_outlined),
-                  label: 'Configuraciones',
-                ),
-              ],
-            ),
-            body: <Widget>[
-              NamesListView(
-                  futureNames: listNames,
-                  favList: _favList,
-                  handleFavsChange: _handleFavsChange),
-              NamesFavsView(
-                  futureNames: listNames,
-                  favList: _favList,
-                  handleFavsChange: _handleFavsChange,
-                  handleClearFavs: _clearFavs),
-              SettingsView(controller: widget.settingsController),
-            ][currentPageIndex],
-          ) : const CircularProgressIndicator()
-    );
-  
-      }
-
+                body: <Widget>[
+                  NamesListView(
+                      futureNames: listNames,
+                      favList: _favList,
+                      handleFavsChange: _handleFavsChange,
+                      onFilterGender: _handleGenderFilter),
+                  NamesFavsView(
+                      futureNames: listNames,
+                      favList: _favList,
+                      handleFavsChange: _handleFavsChange,
+                      handleClearFavs: _clearFavs),
+                  SettingsView(controller: widget.settingsController),
+                ][currentPageIndex],
+              )
+            : const CircularProgressIndicator());
   }
-
+}
