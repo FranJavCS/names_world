@@ -1,12 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:names_world/src/names_feature/names_favs_view.dart';
-import 'dart:convert';
-import 'names_feature/name.dart';
+import 'package:names_world/src/services/name_services.dart';
+import 'models/name.dart';
 import 'names_feature/names_list_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/services.dart';
 import 'dart:developer' as developer;
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
@@ -33,14 +30,11 @@ class _MainSectionState extends State<MainSection> {
   List<Name> favoriteNames = [];
 
   // Fetch content from the json file
-  Future<void> readJson() async {
-    final String response =
-        await rootBundle.loadString('assets/json/data.json');
-    final data = await json.decode(response)['items'] as List;
-    developer.log('Consultando data', name: 'my.app.category');
-    developer.log(jsonEncode(data), name: 'my.app.category');
+  Future<void> _getNames() async {
+   NameServices namesService =  NameServices();
+    List<Name> namesTmp = await namesService.getAllNames();
     setState(() {
-      allListNames = data.map((nameJson) => Name.fromJson(nameJson)).toList();
+      allListNames = namesTmp;
       listNames = allListNames;
     });
   }
@@ -70,6 +64,7 @@ class _MainSectionState extends State<MainSection> {
 
   Future<void> _loadFavs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     setState(() {
       _favList = prefs.getStringList('favList') ?? [];
     });
@@ -82,24 +77,24 @@ class _MainSectionState extends State<MainSection> {
   }
 
   void _handleGenderFilter(gender) {
- developer.log(gender);
+    developer.log(gender);
     if (gender != '') {
       setState(() {
-        listNames= allListNames.where((name) => name.gender == gender).toList();
+        listNames =
+            allListNames.where((name) => name.gender == gender).toList();
       });
     } else {
       setState(() {
         listNames = allListNames;
       });
     }
-    
   }
 
   @override
   // ignore: must_call_super
   initState() {
     // ignore: avoid_print
-    readJson();
+    _getNames();
     _loadFavs();
   }
 

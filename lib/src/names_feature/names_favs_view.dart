@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:names_world/src/names_feature/names_list.dart';
 
-import 'name.dart';
+import '../models/name.dart';
 
 class NamesFavsView extends StatefulWidget {
   const NamesFavsView({Key? key, required this.futureNames, required this.handleFavsChange, required this.favList, required this.handleClearFavs}) : super(key: key);

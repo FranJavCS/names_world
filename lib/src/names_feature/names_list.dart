@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'name.dart';
+import '../models/name.dart';
 import 'name_list_item.dart';
 
 typedef FavoriteChangedCallback = Function(Name name, bool inFav);

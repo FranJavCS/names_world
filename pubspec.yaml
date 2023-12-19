@@ -14,7 +14,10 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  path: ^1.8.3
+  path_provider: ^2.1.1
   shared_preferences: ^2.2.2
+  sqflite: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -32,3 +35,6 @@ flutter:
     # Add assets from the images directory to the application.
     - assets/images/
     - assets/json/
+    - assets/names.db
+
+

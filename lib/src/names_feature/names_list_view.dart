@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:names_world/src/names_feature/names_list.dart';
-import '../settings/settings_view.dart';
+import '../models/name.dart';
 
-import 'name.dart';
 
 class NamesListView extends StatefulWidget {
   const NamesListView({Key? key, required this.futureNames, required this.handleFavsChange, required this.favList, this.onFilterGender}) : super(key: key);
@@ -10,7 +9,6 @@ class NamesListView extends StatefulWidget {
   final List<Name>? futureNames;
   final List<String> favList;
   final handleFavsChange;
-
   final onFilterGender;
 
   static const routeName = '/';
