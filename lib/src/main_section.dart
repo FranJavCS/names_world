@@ -32,7 +32,7 @@ class _MainSectionState extends State<MainSection> {
 
   // Fetch content from the json file
   Future<void> _getNames() async {
-   NameServices namesService =  NameServices();
+    NameServices namesService = NameServices();
     List<Name> namesTmp = await namesService.getAllNames();
     setState(() {
       allListNames = namesTmp;
@@ -91,6 +91,13 @@ class _MainSectionState extends State<MainSection> {
     }
   }
 
+
+  void _changeScreen(index){
+    setState(() {
+      currentPageIndex = index;
+    });
+  }
+
   @override
   // ignore: must_call_super
   initState() {
@@ -106,13 +113,18 @@ class _MainSectionState extends State<MainSection> {
     return Center(
         child: listNames.isNotEmpty
             ? Scaffold(
-                bottomNavigationBar: const NavBar(),
+                bottomNavigationBar:  NavBar(changeScreen : _changeScreen, currentPageIndex:currentPageIndex,),
                 body: <Widget>[
                   NamesListView(
                       futureNames: listNames,
                       favList: _favList,
                       handleFavsChange: _handleFavsChange,
                       onFilterGender: _handleGenderFilter),
+                  NamesFavsView(
+                      futureNames: listNames,
+                      favList: _favList,
+                      handleFavsChange: _handleFavsChange,
+                      handleClearFavs: _clearFavs),
                   NamesFavsView(
                       futureNames: listNames,
                       favList: _favList,
