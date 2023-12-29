@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:names_world/src/names_feature/names_list.dart';
+import 'package:NameFinder/src/names_feature/names_list.dart';
 
 import '../models/name.dart';
 

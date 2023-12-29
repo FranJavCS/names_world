@@ -54,8 +54,9 @@ class NameListItem extends StatelessWidget {
           );
         },
         leading: CircleAvatar(
-          backgroundColor: _getGenderColor(context, name.gender),
-          child: Text(name.gender),
+          radius: 25.0,
+          backgroundImage: Image.asset( name.gender == 'M' ?  "assets/images/baby_avatar/nino_1.jpg": "assets/images/baby_avatar/nina_1.jpg").image,
+          backgroundColor: Colors.transparent,
         ),
         title: Text(name.name),
         trailing: IconButton(

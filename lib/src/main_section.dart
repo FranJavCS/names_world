@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:names_world/src/names_feature/names_favs_view.dart';
-import 'package:names_world/src/services/name_services.dart';
+import 'package:NameFinder/src/names_feature/names_favs_view.dart';
+import 'package:NameFinder/src/services/name_services.dart';
+import 'components/home/nav_bar.dart';
 import 'models/name.dart';
 import 'names_feature/names_list_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -105,32 +106,7 @@ class _MainSectionState extends State<MainSection> {
     return Center(
         child: listNames.isNotEmpty
             ? Scaffold(
-                bottomNavigationBar: NavigationBar(
-                  onDestinationSelected: (int index) {
-                    setState(() {
-                      currentPageIndex = index;
-                    });
-                  },
-                  indicatorColor: Theme.of(context).primaryColor,
-                  selectedIndex: currentPageIndex,
-                  destinations: const <Widget>[
-                    NavigationDestination(
-                      selectedIcon: Icon(Icons.home),
-                      icon: Icon(Icons.home_outlined),
-                      label: 'Home',
-                    ),
-                    NavigationDestination(
-                      selectedIcon: Icon(Icons.star),
-                      icon: Icon(Icons.star_outline),
-                      label: 'Favoritos',
-                    ),
-                    NavigationDestination(
-                      selectedIcon: Icon(Icons.settings),
-                      icon: Icon(Icons.settings_outlined),
-                      label: 'Configuraciones',
-                    ),
-                  ],
-                ),
+                bottomNavigationBar: const NavBar(),
                 body: <Widget>[
                   NamesListView(
                       futureNames: listNames,

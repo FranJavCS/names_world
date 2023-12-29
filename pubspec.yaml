@@ -1,5 +1,5 @@
-name: names_world
-description: A new Flutter project.
+name: NameFinder
+description: Encuentra el nombre perfecto para tu bebé
 
 # Prevent accidental publishing to pub.dev.
 publish_to: 'none'
@@ -18,7 +18,7 @@ dependencies:
   path_provider: ^2.1.1
   shared_preferences: ^2.2.2
   sqflite: ^2.3.0
-
+  azlistview: ^2.0.0  #version may change in future
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -36,5 +36,6 @@ flutter:
     - assets/images/
     - assets/json/
     - assets/names.db
+    - assets/images/baby_avatar/
 
 

@@ -1,11 +1,13 @@
-class Name {
+import 'package:azlistview/azlistview.dart';
+
+class Name extends ISuspensionBean {
   final int id;
   final String name;
   final String meaning;
   final String gender;
   final String origin;
 
-  const Name(
+   Name(
       {required this.id,
       required this.name,
       required this.meaning,
@@ -30,4 +32,10 @@ class Name {
       'origin': origin 
     };
    } 
+
+    @override
+  String getSuspensionTag() {
+    // TODO: implement getSuspensionTag
+    return name[0];
+  }
 }
